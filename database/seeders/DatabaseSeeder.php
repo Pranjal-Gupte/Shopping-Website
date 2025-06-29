@@ -16,8 +16,19 @@ class DatabaseSeeder extends Seeder
         // User::factory(10)->create();
 
         User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
+            'name' => 'Admin',
+            'email' => 'admin@aidaily.epizy.com',
+            'mobile' => '0987654321',
+            'password' => bcrypt('admin@123'),
+            'utype' => 'ADM'
+        ]);
+
+        User::factory()->create([
+            'name' => 'User',
+            'email' => 'user@aidaily.epizy.com',
+            'mobile' => '1234567890',
+            'password' => bcrypt('user@123'),
+            'utype' => 'USR'
         ]);
     }
 }
