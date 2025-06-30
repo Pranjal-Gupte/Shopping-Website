@@ -84,7 +84,7 @@
                                     </a>
                                     <ul class="sub-menu">
                                         <li class="sub-menu-item">
-                                            <a href="add-brand.html" class="">
+                                            <a href="{{ route('admin.brand.add') }}" class="">
                                                 <div class="text">New Brand</div>
                                             </a>
                                         </li>

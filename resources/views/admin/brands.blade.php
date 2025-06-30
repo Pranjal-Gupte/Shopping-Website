@@ -32,11 +32,13 @@
                         </div>
                     </form>
                 </div>
-                <a class="tf-button style-1 w208" href="add-brand.html"><i
-                        class="icon-plus"></i>Add new</a>
+                <a class="tf-button style-1 w208" href="{{ route('admin.brand.add') }}"><i  class="icon-plus"></i>Add new</a>
             </div>
             <div class="wg-table table-all-user">
                 <div class="table-responsive">
+                    @if(Session::has('status'))
+                    <p class="alert alert-success">{{ Session::get('status') }}</p>
+                    @endif
                     <table class="table table-striped table-bordered">
                         <thead>
                             <tr>
@@ -53,7 +55,7 @@
                                 <td>{{ $brand->id }}</td>
                                 <td class="pname">
                                     <div class="image">
-                                        <img src="{{ asset('uploads/brands') }} / {{ $brand->image }}" alt="{{ $brand->name }}" class="image">
+                                        <img src="{{ asset('uploads/brands') }}/{{ $brand->image }}" alt="{{ $brand->name }}" class="image">
                                     </div>
                                     <div class="name">
                                         <a href="#" class="body-title-2">{{ $brand->name }}</a>
