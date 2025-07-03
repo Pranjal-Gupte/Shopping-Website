@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Support\Carbon;
 use Intervention\Image\Laravel\Facades\Image;
+use Illuminate\Support\Facades\File;
 
 class AdminController extends Controller
 {
@@ -31,7 +32,7 @@ class AdminController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
             'slug' => 'required|string|max:255|unique:brands,slug',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:4096',
         ]);
 
         $brand = new Brand();
@@ -45,6 +46,41 @@ class AdminController extends Controller
         $brand->save();
 
         return redirect()->route('admin.brands')->with('status', 'Brand added successfully!');
+    }
+
+    public function editBrand($id)
+    {
+        $brand = Brand::find($id);
+        return view('admin.brand-edit', compact('brand'));
+    }
+
+    public function updateBrand(Request $request)
+    {
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'slug' => 'required|string|max:255|unique:brands,slug,' . $request->id,
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+        ]);
+
+        $brand = Brand::find($request->id);
+        $brand->name = $request->name;
+        $brand->slug = Str::slug($request->name);
+
+        if ($request->hasFile('image')) {
+            $image = $request->file('image');
+            $file_extension = $request->file('image')->extension();
+            $file_name = Carbon::now()->timestamp . '.' . $file_extension;
+            $this->GenerateBrandThumbnailsImage($image, $file_name);
+            $brand->image = $file_name;
+
+            if(File::exists(public_path('uploads/brands/' . $brand->image))) {
+                File::delete(public_path('uploads/brands/' . $brand->image));
+            }
+        }
+
+        $brand->save();
+
+        return redirect()->route('admin.brands')->with('status', 'Brand updated successfully!');
     }
 
     public function GenerateBrandThumbnailsImage($image, $imageName)
