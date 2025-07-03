@@ -30,5 +30,7 @@ class DatabaseSeeder extends Seeder
             'password' => bcrypt('user@123'),
             'utype' => 'USR'
         ]);
+
+        $this->call(BrandsSeeder::class);
     }
 }
