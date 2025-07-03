@@ -11,22 +11,28 @@ use Illuminate\Support\Facades\File;
 
 class AdminController extends Controller
 {
+    // Returns the admin dashboard view 
     public function index()
     {
         return view('admin.index');
     }
 
+    // Returns the brands view in the admin dashboard
     public function brands()
     {
         $brands = Brand::orderBy('id', 'desc')->paginate(10);
         return view('admin.brands', compact('brands'));
     }
 
+    // Returns the view to add a new brand
     public function addBrand()
     {
         return view('admin.brand-add');
     }
 
+    // Handles the storage of a new brand
+    // Validates the request, processes the image, and saves the brand to the database
+    // Redirects back to the brands page with a success message
     public function storeBrand(Request $request)
     {
         $request->validate([
@@ -48,18 +54,29 @@ class AdminController extends Controller
         return redirect()->route('admin.brands')->with('status', 'Brand added successfully!');
     }
 
+    // Handles the update of a brand and returns the edit view
     public function editBrand($id)
     {
         $brand = Brand::find($id);
         return view('admin.brand-edit', compact('brand'));
     }
 
+    // Validates the request, processes the image if provided, updates the brand in the database
+    // Redirects back to the brands page with a success message
+    // If the image is updated, it deletes the old image file from the server
+    // Generates a new thumbnail for the updated image
+    // Uses the GenerateBrandThumbnailsImage method to create a thumbnail for the brand image
+    // The thumbnail is resized to 124x124 pixels and saved in the uploads/brands directory
+    // The method also handles the case where the image is not provided, ensuring that the brand
+    // name and slug are still updated without changing the image
+    // The slug is generated from the brand name using the Str::slug method
+    // The method returns a redirect response to the brands page with a success message
     public function updateBrand(Request $request)
     {
         $request->validate([
             'name' => 'required|string|max:255',
             'slug' => 'required|string|max:255|unique:brands,slug,' . $request->id,
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:4096',
         ]);
 
         $brand = Brand::find($request->id);
@@ -83,6 +100,8 @@ class AdminController extends Controller
         return redirect()->route('admin.brands')->with('status', 'Brand updated successfully!');
     }
 
+    // Generates a thumbnail for the brand image
+    // The thumbnail is resized to 124x124 pixels and saved in the uploads/brands directory
     public function GenerateBrandThumbnailsImage($image, $imageName)
     {
         $destinationPath = public_path('uploads/brands');
@@ -92,5 +111,23 @@ class AdminController extends Controller
         $img->resize(124, 124, function($constraint) {
             $constraint->aspectRatio();
         })->save($destinationPath. '/' . $imageName);
+    }
+
+    // Deletes a brand by its ID
+    // Checks if the brand exists, deletes the image file from the server if it exists,
+    // and then deletes the brand from the database
+    // Redirects back to the brands page with a success message
+    // If the brand does not exist, it redirects back with an error message
+    public function deleteBrand($id)
+    {
+        $brand = Brand::find($id);
+        if ($brand) {
+            if (File::exists(public_path('uploads/brands/' . $brand->image))) {
+                File::delete(public_path('uploads/brands/' . $brand->image));
+            }
+            $brand->delete();
+            return redirect()->route('admin.brands')->with('status', 'Brand Deleted successfully!');
+        }
+        return redirect()->route('admin.brands')->with('error', 'Brand not found!');
     }
 }
