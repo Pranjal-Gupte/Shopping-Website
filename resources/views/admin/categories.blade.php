@@ -55,7 +55,7 @@
                                 <td>{{ $category->id }}</td>
                                 <td class="pname">
                                     <div class="image">
-                                        <img src="{{ asset('uploads/category') }}/{{ $category->image }}" alt="{{ $category->name }}" class="image">
+                                        <img src="{{ asset('uploads/categories') }}/{{ $category->image }}" alt="{{ $category->name }}" class="image">
                                     </div>
                                     <div class="name">
                                         <a href="#" class="body-title-2">{{ $category->name }}</a>
