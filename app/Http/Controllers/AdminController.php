@@ -140,4 +140,47 @@ class AdminController extends Controller
         $categories = Category::orderBy('id', 'desc')->paginate(10);
         return view('admin.categories', compact('categories'));
     }
+
+    // Returns the view to add a new category
+    public function addCategory()
+    {
+        return view('admin.category-add');
+    }
+
+    // Handles the storage of a new category
+    // Validates the request, processes the image, and saves the category to the database
+    // Redirects back to the categories page with a success message
+    public function storeCategory(Request $request)
+    {
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'slug' => 'required|string|max:255|unique:brands,slug',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:4096',
+        ]);
+
+        $category = new Category();
+        $category->name = $request->name;
+        $category->slug = Str::slug($request->name);
+        $image = $request->file('image');
+        $file_extension = $request->file('image')->extension();
+        $file_name = Carbon::now()->timestamp . '.' . $file_extension;
+        $this->GenerateCategoryThumbnailsImage($image, $file_name);
+        $category->image = $file_name;
+        $category->save();
+
+        return redirect()->route('admin.categories')->with('status', 'Category added successfully!');
+    }
+
+    // Generates a thumbnail for the category image
+    // The thumbnail is resized to 124x124 pixels and saved in the uploads/categories directory
+    public function GenerateCategoryThumbnailsImage($image, $imageName)
+    {
+        $destinationPath = public_path('uploads/categories');
+        $img = Image::read($image->path());
+
+        $img->cover(124, 124, "top");
+        $img->resize(124, 124, function($constraint) {
+            $constraint->aspectRatio();
+        })->save($destinationPath. '/' . $imageName);
+    }
 }
