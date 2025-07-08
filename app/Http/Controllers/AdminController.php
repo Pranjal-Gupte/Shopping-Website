@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Brand;
+use App\Models\Category;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Support\Carbon;
@@ -18,6 +19,7 @@ class AdminController extends Controller
     }
 
     // Returns the brands view in the admin dashboard
+    // Retrieves all brands from the database, ordered by ID in descending order
     public function brands()
     {
         $brands = Brand::orderBy('id', 'desc')->paginate(10);
@@ -129,5 +131,13 @@ class AdminController extends Controller
             return redirect()->route('admin.brands')->with('status', 'Brand Deleted successfully!');
         }
         return redirect()->route('admin.brands')->with('error', 'Brand not found!');
+    }
+
+    // Returns the categories view in the admin dashboard
+    // Retrieves all categories from the database, ordered by ID in descending order
+    public function categories()
+    {
+        $categories = Category::orderBy('id', 'desc')->paginate(10);
+        return view('admin.categories', compact('categories'));
     }
 }
