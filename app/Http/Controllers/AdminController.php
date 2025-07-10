@@ -229,4 +229,22 @@ class AdminController extends Controller
             $constraint->aspectRatio();
         })->save($destinationPath. '/' . $imageName);
     }
+
+    // Deletes a category by its ID
+    // Checks if the category exists, deletes the image file from the server if it exists,
+    // and then deletes the category from the database
+    // Redirects back to the categories page with a success message
+    // If the category does not exist, it redirects back with an error message
+    public function deleteCategory($id)
+    {
+        $category = Category::find($id);
+        if ($category) {
+            if (File::exists(public_path('uploads/categories/' . $category->image))) {
+                File::delete(public_path('uploads/categories/' . $category->image));
+            }
+            $category->delete();
+            return redirect()->route('admin.categories')->with('status', 'Category Deleted successfully!');
+        }
+        return redirect()->route('admin.categories')->with('error', 'Category not found!');
+    }
 }

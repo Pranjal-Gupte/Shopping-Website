@@ -70,7 +70,7 @@
                                                 <i class="icon-edit-3"></i>
                                             </div>
                                         </a>
-                                        <form action="#" method="POST">
+                                        <form action="{{ route('admin.category.delete', ['id'=>$category->id]) }}" method="POST">
                                             @csrf
                                             @method('DELETE')
                                             <div class="item text-danger delete">
@@ -101,8 +101,8 @@
             e.preventDefault();
             var form = $(this).closest('form');
             swal({
-                title: "Are you sure you want to delete this brand?",
-                text: "Once deleted, you will not be able to recover this brand!",
+                title: "Are you sure you want to delete this category?",
+                text: "Once deleted, you will not be able to recover this category!",
                 type: "warning",
                 buttons: ["No", "Yes"],
                 confirmButtonColor: "#DC3545",
