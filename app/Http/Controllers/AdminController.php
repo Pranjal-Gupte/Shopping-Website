@@ -171,6 +171,52 @@ class AdminController extends Controller
         return redirect()->route('admin.categories')->with('status', 'Category added successfully!');
     }
 
+    // Handles the update of a category and returns the edit view
+    public function editCategory($id)
+    {
+        $category = Category::find($id);
+        return view('admin.category-edit', compact('category'));
+    }
+
+    // Validates the request, processes the image if provided, updates the category in the database
+    // Redirects back to the categories page with a success message
+    // If the image is updated, it deletes the old image file from the server
+    // Generates a new thumbnail for the updated image
+    // Uses the GenerateCategoryThumbnailsImage method to create a thumbnail for the category image
+    // The thumbnail is resized to 124x124 pixels and saved in the uploads/categories directory
+    // The method also handles the case where the image is not provided, ensuring that the category
+    // name and slug are still updated without changing the image
+    // The slug is generated from the category name using the Str::slug method
+    // The method returns a redirect response to the categories page with a success message
+    public function updateCategory(Request $request)
+    {
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'slug' => 'required|string|max:255|unique:brands,slug,' . $request->id,
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:4096',
+        ]);
+
+        $category = Category::find($request->id);
+        $category->name = $request->name;
+        $category->slug = Str::slug($request->name);
+
+        if ($request->hasFile('image')) {
+            $image = $request->file('image');
+            $file_extension = $request->file('image')->extension();
+            $file_name = Carbon::now()->timestamp . '.' . $file_extension;
+            $this->GenerateCategoryThumbnailsImage($image, $file_name);
+            $category->image = $file_name;
+
+            if(File::exists(public_path('uploads/categories/' . $category->image))) {
+                File::delete(public_path('uploads/categories/' . $category->image));
+            }
+        }
+
+        $category->save();
+
+        return redirect()->route('admin.categories')->with('status', 'Category updated successfully!');
+    }
+
     // Generates a thumbnail for the category image
     // The thumbnail is resized to 124x124 pixels and saved in the uploads/categories directory
     public function GenerateCategoryThumbnailsImage($image, $imageName)
