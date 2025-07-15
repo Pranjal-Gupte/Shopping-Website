@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Brand;
 use App\Models\Category;
+use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Support\Carbon;
@@ -246,5 +247,13 @@ class AdminController extends Controller
             return redirect()->route('admin.categories')->with('status', 'Category Deleted successfully!');
         }
         return redirect()->route('admin.categories')->with('error', 'Category not found!');
+    }
+
+    // Returns the products view in the admin dashboard
+    // Retrieves all products from the database, ordered by creation time in descending order
+    public function products()
+    {
+        $products = Product::orderBy('created_at', 'desc')->paginate(10);
+        return view('admin.products', compact('products'));
     }
 }
