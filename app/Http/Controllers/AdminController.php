@@ -350,6 +350,10 @@ class AdminController extends Controller
         return redirect()->route('admin.products')->with('status', 'Product added successfully!');
     }
 
+    // Returns the view to edit a product
+    // Retrieves the product by its ID, along with all categories and brands from the database
+    // Passes the product, categories, and brands to the view for editing
+    // The categories and brands are ordered by name for better user experience
     public function editProduct($id)
     {
         $product = Product::find($id);
@@ -358,6 +362,27 @@ class AdminController extends Controller
         return view('admin.product-edit', compact('product', 'categories', 'brands'));
     }
 
+    // Handles the update of a product
+    // Validates the request, processes the main image and gallery images if provided, updates the product in the database
+    // Redirects back to the products page with a success message
+    // The main image is processed to create a thumbnail and saved in the uploads/products directory
+    // The gallery images are processed similarly, resized, and saved in the same directory
+    // The product's category and brand are set based on the selected IDs from the form
+    // The method uses the GenerateProductThumbnailsImage method
+    // to create a thumbnail for the product image
+    // The thumbnail is resized to 540x689 pixels and saved in the uploads/products directory
+    // The method also handles the case where the product images are not provided, ensuring that the product can still be updated without additional images
+    // The gallery images are stored as a comma-separated string in the database
+    // The method returns a redirect response to the products page with a success message
+    // The method uses the File facade to check if the old image and gallery images exist
+    // If they do, it deletes them from the server to free up space
+    // The method also ensures that the product's slug is unique by excluding the current product's ID from the uniqueness check
+    // The slug is generated from the product name using the Str::slug method
+    // The method returns a redirect response to the products page with a success message
+    // The method uses the Carbon library to generate a unique timestamp for the image file names
+    // The method ensures that the product's quantity is an integer and cannot be negative
+    // The method also ensures that the product's regular price is a numeric value and cannot be negative
+    // back to the products page with a success message after the product is updated
     public function updateProduct(Request $request)
     {
         $request->validate([
@@ -470,5 +495,29 @@ class AdminController extends Controller
         $img->resize(104, 104, function($constraint) {
             $constraint->aspectRatio();
         })->save($destinationPathThumbnail. '/' . $imageName);
+    }
+
+    public function deleteProduct($id)
+    {
+        $product = Product::find($id);
+        if ($product) {
+            if (File::exists(public_path('uploads/products/' . $product->image))) {
+                File::delete(public_path('uploads/products/' . $product->image));
+            }
+            if (File::exists(public_path('uploads/products/thumbnails/' . $product->image))) {
+                File::delete(public_path('uploads/products/thumbnails/' . $product->image));
+            }
+            foreach (explode(',', $product->images) as $gallery_image) {
+                if (File::exists(public_path('uploads/products/' . $gallery_image))) {
+                    File::delete(public_path('uploads/products/' . $gallery_image));
+                }
+                if (File::exists(public_path('uploads/products/thumbnails/' . $gallery_image))) {
+                    File::delete(public_path('uploads/products/thumbnails/' . $gallery_image));
+                }
+            }
+            $product->delete();
+            return redirect()->route('admin.products')->with('status', 'Product deleted successfully!');
+        }
+        return redirect()->route('admin.products')->with('error', 'Product not found!');
     }
 }
