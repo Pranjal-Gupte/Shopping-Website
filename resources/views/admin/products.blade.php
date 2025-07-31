@@ -44,7 +44,7 @@
                             <th>#</th>
                             <th>Name</th>
                             <th>Price</th>
-                            <th>SalePrice</th>
+                            <th>Sale Price</th>
                             <th>SKU</th>
                             <th>Category</th>
                             <th>Brand</th>
