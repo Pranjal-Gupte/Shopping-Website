@@ -120,12 +120,12 @@
                     <div class="upload-image mb-16">
                         @if($product->images)
                             @foreach(explode(',', $product->images) as $img)
-                            <?php 
-                                $cleanImgName = str_replace(['[', ']', '"'], '', $img);
-                            ?>
-                            <div class="item gitems">
-                                <img src="{{ asset('uploads/products') }}/{{ trim($cleanImgName) }}" alt="{{ $product->name }}">
-                            </div>
+                                <?php 
+                                    $cleanImgName = str_replace(['[', ']', '"'], '', $img);
+                                ?>
+                                <div class="item gitems">
+                                    <img src="{{ asset('uploads/products') }}/{{ trim($cleanImgName) }}" alt="{{ $product->name }}">
+                                </div>
                             @endforeach
                         @endif
                         <div id="galUpload" class="item up-load">
