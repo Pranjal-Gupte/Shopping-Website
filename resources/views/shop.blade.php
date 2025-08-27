@@ -368,14 +368,14 @@
                 <div class="swiper-container background-img js-swiper-slider" data-settings='{"resizeObserver": true}'>
                   <div class="swiper-wrapper">
                     <div class="swiper-slide">
-                      <a href="details.html"><img loading="lazy" src="{{ asset('uploads/products') }}/{{ $product->image }}" width="330" height="400" alt="{{ $product->name }}" class="pc__img"></a>
+                      <a href="{{ route('shop.product.details', ['productSlug'=>$product->slug]) }}"><img loading="lazy" src="{{ asset('uploads/products') }}/{{ $product->image }}" width="330" height="400" alt="{{ $product->name }}" class="pc__img"></a>
                     </div>
                     <div class="swiper-slide">
                       @foreach(explode(',', $product->images) as $img)
                       <?php 
                         $cleanImgName = str_replace(['[', ']', '"'], '', $img);
                       ?>
-                      <a href="details.html"><img loading="lazy" src="{{ asset('uploads/products') }}/{{ $cleanImgName }}" width="330" height="400" alt="{{ $product->name }}" class="pc__img"></a>
+                      <a href="{{ route('shop.product.details', ['productSlug'=>$product->slug]) }}"><img loading="lazy" src="{{ asset('uploads/products') }}/{{ $cleanImgName }}" width="330" height="400" alt="{{ $product->name }}" class="pc__img"></a>
                       @endforeach
                     </div>
                   </div>
@@ -395,7 +395,7 @@
 
               <div class="pc__info position-relative">
                 <p class="pc__category">{{ $product->category->name }}</p>
-                <h6 class="pc__title"><a href="details.html">{{ $product->name }}</a></h6>
+                <h6 class="pc__title"><a href="{{ route('shop.product.details', ['productSlug'=>$product->slug]) }}">{{ $product->name }}</a></h6>
                 <div class="product-card__price d-flex">
                   <span class="money price">
                     @if($product->sale_price)
