@@ -39,6 +39,9 @@ This is a shopping website just like amazon, flipkart, etc. but using Laravel 11
 
 > **Note: access the website at `http://localhost:8000`**
 
+## Cart Service Provider Package
+This project uses a custom made cart handler. To learn more about this you can go through [this](https://github.com/Pranjal-Gupte/Shopping-Cart/).
+
 ## Dummy Accounts
 
 ### Admin Account
