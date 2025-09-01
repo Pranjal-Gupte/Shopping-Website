@@ -4,8 +4,72 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "b2b33b1ce592357a6e00778c236de9a3",
+    "content-hash": "9f5e084b0d489750c390afacd698788c",
     "packages": [
+        {
+            "name": "aidaily/shoppingcart",
+            "version": "v1.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/Pranjal-Gupte/Shopping-Cart.git",
+                "reference": "f7e699233fe4ab23b7d7d23e0691e8e152c288e5"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/Pranjal-Gupte/Shopping-Cart/zipball/f7e699233fe4ab23b7d7d23e0691e8e152c288e5",
+                "reference": "f7e699233fe4ab23b7d7d23e0691e8e152c288e5",
+                "shasum": ""
+            },
+            "require": {
+                "illuminate/events": "5.1.*|5.2.*|5.3.*|5.4.*|5.5.*|5.6.*|5.7.*|5.8.*|^6|^7|^8|^9|^10|^11|^12",
+                "illuminate/session": "5.1.*|5.2.*|5.3.*|5.4.*|5.5.*|5.6.*|5.7.*|5.8.*|^6|^7|^8|^9|^10|^11|^12",
+                "illuminate/support": "5.1.*|5.2.*|5.3.*|5.4.*|5.5.*|5.6.*|5.7.*|5.8.*|^6|^7|^8|^9|^10|^11|^12"
+            },
+            "require-dev": {
+                "mockery/mockery": "~1.6",
+                "orchestra/testbench": "~3.1",
+                "phpunit/phpunit": "~5.0 || ~6.0 || ~7.0 || ~10.0 || ^10.5 || ^11.5"
+            },
+            "suggest": {
+                "Aidaily/notify": "Simple flash notifications for Laravel"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "aliases": {
+                        "Cart": "Aidaily\\Shoppingcart\\Facades\\Cart"
+                    },
+                    "providers": [
+                        "Aidaily\\Shoppingcart\\ShoppingcartServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Aidaily\\Shoppingcart\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Pranjal Gupte",
+                    "email": "pranjalagupte55555@gmail.com"
+                }
+            ],
+            "description": "Laravel Shoppingcart",
+            "keywords": [
+                "laravel",
+                "shoppingcart"
+            ],
+            "support": {
+                "issues": "https://github.com/Pranjal-Gupte/Shopping-Cart/issues",
+                "source": "https://github.com/Pranjal-Gupte/Shopping-Cart/tree/v1.0.0"
+            },
+            "time": "2025-09-01T14:20:34+00:00"
+        },
         {
             "name": "brick/math",
             "version": "0.12.3",
