@@ -28,7 +28,7 @@
         </a>
       </div>
       <div class="shopping-cart">
-        @if($items->count()>0)
+        @if($cartItemsWithProducts->count()>0)
         <div class="cart-table__wrapper">
           <table class="cart-table">
             <thead>
@@ -42,11 +42,11 @@
               </tr>
             </thead>
             <tbody>
-              @foreach ($items as $item)
+              @foreach ($cartItemsWithProducts as $item)
               <tr>
                 <td>
                   <div class="shopping-cart__product-item">
-                    <img loading="lazy" src="{{ asset('uploads/products/thumbnails') }}/{{ $item->model->image }}" width="120" height="120" alt="{{ $item->name }}" />
+                    <img loading="lazy" src="{{ asset('uploads/products/thumbnails') }}/{{ $item->image }}" width="120" height="120" alt="{{ $item->name }}" />
                   </div>
                 </td>
                 <td>
@@ -79,7 +79,7 @@
                   </div>
                 </td>
                 <td>
-                  <span class="shopping-cart__subtotal">₹{{ $item->subTotal() }}</span>
+                  <span class="shopping-cart__subtotal">₹{{ $item->subtotal }}</span>
                 </td>
                 <td>
                   <form action="{{ route('cart.item.remove', ['rowId'=>$item->rowId]) }}" method="POST">
@@ -118,7 +118,7 @@
                 <tbody>
                   <tr>
                     <th>Subtotal</th>
-                    <td>₹{{ Cart::instance('cart')->subTotal() }}</td>
+                    <td>₹{{ $subtotal }}</td>
                   </tr>
                   <tr>
                     <th>Shipping</th>
@@ -146,11 +146,11 @@
                   </tr>
                   <tr>
                     <th>VAT</th>
-                    <td>₹{{ Cart::instance('cart')->tax() }}</td>
+                    <td>₹{{ $tax }}</td>
                   </tr>
                   <tr>
                     <th>Total</th>
-                    <td>₹{{ Cart::instance('cart')->total() }}</td>
+                    <td>₹{{ $total }}</td>
                   </tr>
                 </tbody>
               </table>
