@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Product;
 use App\Models\Brand;
+use App\Models\Category;
 use Illuminate\Http\Request;
 
 class ShopController extends Controller
@@ -15,6 +16,7 @@ class ShopController extends Controller
         $orderColumn = '';
         $orderOrder = '';
         $filterBrands = $request->query('brands');
+        $filterCategories = $request->query('categories');
         switch($order)
         {
             case 1:
@@ -38,10 +40,15 @@ class ShopController extends Controller
                 $orderOrder = 'DESC';
         }
         $brands = Brand::orderBy('name',  'ASC')->get();
+        $categories = Category::orderBy('name', 'ASC')->get();
         $products = Product::where(function($query) use($filterBrands){
             $query->whereIn('brand_id', explode(',', $filterBrands))->orWhereRaw("'".$filterBrands."'=''");
-        })->orderBy($orderColumn, $orderOrder)->paginate($size);
-        return view('shop', compact('products', 'size', 'order', 'brands', 'filterBrands'));
+        })->
+        where(function($query) use($filterCategories){
+            $query->whereIn('category_id', explode(',', $filterCategories))->orWhereRaw("'".$filterCategories."'=''");
+        })->
+        orderBy($orderColumn, $orderOrder)->paginate($size);
+        return view('shop', compact('products', 'size', 'order', 'brands', 'filterBrands', 'categories', 'filterCategories'));
     }
 
     public function productDetails($productSlug)
