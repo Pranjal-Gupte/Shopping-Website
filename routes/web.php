@@ -24,6 +24,7 @@ Route::put('/cart/decrease-quantity/{rowId}', [CartController::class, 'decreaseC
 Route::delete('/cart/remove/{rowId}', [CartController::class, 'removeItem'])->name('cart.item.remove');
 Route::delete('/cart/clear', [CartController::class, 'clearCart'])->name('cart.clear');
 
+Route::get('/wishlist', [WishlistController::class, 'index'])->name('wishlist.index');
 Route::post('/wishlist/add', [WishlistController::class, 'addToWishlist'])->name('wishlist.add');
 
 Route::middleware(['auth'])->group(function () {
