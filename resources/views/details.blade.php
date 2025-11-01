@@ -142,9 +142,13 @@
           @endif
           <div class="product-single__addtolinks">
             @if (Cart::instance("wishlist")->content()->where('id', $product->id)->count()>0)
-              <a href="javascript:void(0)" class="menu-link menu-link_us-s add-to-wishlist filled-heart"><svg width="16" height="16" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <form action="{{ route('wishlist.item.remove', ['rowId' => Cart::instance("wishlist")->content()->where('id', $product->id)->first()->rowId]) }}" method="POST" id="remove-item">
+                @csrf
+                @method('DELETE')
+              <a href="javascript:void(0)" class="menu-link menu-link_us-s add-to-wishlist filled-heart" onclick="document.getElementById('remove-item').submit();"><svg width="16" height="16" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <use href="#icon_heart" />
               </svg><span>Remove from Wishlist</span></a>
+              </form>
             @else
             <form action="{{ route('wishlist.add') }}" method="POST" id="wishlist-form">
                   @csrf
@@ -423,7 +427,7 @@
             @foreach ($related_products as $related_product)
               <div class="swiper-slide product-card">
                 <div class="pc__img-wrapper">
-                  <a href="{{ route('shop.product.details', ['productSlug'=>$product->slug]) }}">
+                  <a href="{{ route('shop.product.details', ['productSlug'=>$related_product->slug]) }}">
                     <img loading="lazy" src="{{ asset('uploads/products') }}/{{ $related_product->image }}" width="330" height="400" alt="Cropped Faux leather Jacket" class="pc__img">
                     @if($related_product->images)
                       @foreach(explode(',', $related_product->images) as $img)
@@ -459,13 +463,32 @@
                       @endif
                     </span>
                   </div>
-
-                  <button class="pc__btn-wl position-absolute top-0 end-0 bg-transparent border-0 js-add-wishlist"
-                    title="Add To Wishlist">
+                  
+                  @if (Cart::instance("wishlist")->content()->where('id', $related_product->id)->count()>0)
+                  <form action="{{ route('wishlist.item.remove', ['rowId' => Cart::instance("wishlist")->content()->where('id', $related_product->id)->first()->rowId]) }}" method="POST">
+                  @csrf
+                  @method('DELETE')
+                  <button class="pc__btn-wl position-absolute top-0 end-0 bg-transparent border-0 js-add-wishlist filled-heart" title="Remove From Wishlist" type="submit">
                     <svg width="16" height="16" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
                       <use href="#icon_heart" />
                     </svg>
                   </button>
+                </form>
+
+                  @else
+                  <form action="{{ route('wishlist.add') }}" method="POST">
+                    @csrf
+                    <input type="hidden" name="id" value="{{ $related_product->id }}">
+                    <input type="hidden" name="name" value="{{ $related_product->name }}">
+                    <input type="hidden" name="price" value="{{ $related_product->sale_price == '' ? $related_product->regular_price : $related_product->sale_price }}">
+                    <input type="hidden" name="quantity" value="1">
+                    <button type="submit" class="pc__btn-wl position-absolute top-0 end-0 bg-transparent border-0 js-add-wishlist" title="Add To Wishlist">
+                      <svg width="16" height="16" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <use href="#icon_heart" />
+                      </svg>
+                    </button>
+                  </form>
+                  @endif
                 </div>
               </div>
             @endforeach
