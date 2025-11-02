@@ -442,13 +442,14 @@
                   <a href="{{ route('cart.index') }}" class="pc__atc btn anim_appear-bottom btn position-absolute border-0 text-uppercase fw-medium js-add-cart js-open-aside btn-warning mb-3">Go To Cart</a>
                   @else
                   <form name="addtocart-form" method="post" action="{{ route('cart.add') }}">
-                  @csrf
-                  <input type="hidden" name="id" value="{{ $related_product->id }}">
-                  <input type="hidden" name="name" value="{{ $related_product->name }}">
-                  <input type="hidden" name="quantity" value="1">
-                  <input type="hidden" name="price" value="{{ $related_product->sale_price == '' ? $related_product->regular_price : $related_product->sale_price }}">
-                  <button class="pc__atc btn anim_appear-bottom btn position-absolute border-0 text-uppercase fw-medium js-add-cart js-open-aside" data-aside="cartDrawer" title="Add To Cart">Add To Cart</button>
+                    @csrf
+                    <input type="hidden" name="id" value="{{ $related_product->id }}">
+                    <input type="hidden" name="name" value="{{ $related_product->name }}">
+                    <input type="hidden" name="quantity" value="1">
+                    <input type="hidden" name="price" value="{{ $related_product->sale_price == '' ? $related_product->regular_price : $related_product->sale_price }}">
+                    <button class="pc__atc btn anim_appear-bottom btn position-absolute border-0 text-uppercase fw-medium js-add-cart js-open-aside" data-aside="cartDrawer" title="Add To Cart">Add To Cart</button>
                   @endif
+                  </form>
                 </div>
 
                 <div class="pc__info position-relative">
@@ -464,31 +465,41 @@
                     </span>
                   </div>
                   
-                  @if (Cart::instance("wishlist")->content()->where('id', $related_product->id)->count()>0)
-                  <form action="{{ route('wishlist.item.remove', ['rowId' => Cart::instance("wishlist")->content()->where('id', $related_product->id)->first()->rowId]) }}" method="POST">
-                  @csrf
-                  @method('DELETE')
-                  <button class="pc__btn-wl position-absolute top-0 end-0 bg-transparent border-0 js-add-wishlist filled-heart" title="Remove From Wishlist" type="submit">
-                    <svg width="16" height="16" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                      <use href="#icon_heart" />
-                    </svg>
-                  </button>
-                </form>
+                  {{-- DEFENSIVE WISHLIST LOGIC START --}}
+                  @php
+                      // Safely attempt to retrieve the wishlist item object
+                      $wishlistItem = Cart::instance("wishlist")->content()->where('id', $related_product->id)->first();
+                  @endphp
+
+                  @if ($wishlistItem)
+                    {{-- REMOVE FROM WISHLIST FORM (Item is currently in wishlist) --}}
+                    <form action="{{ route('wishlist.item.remove', ['rowId' => $wishlistItem->rowId]) }}" method="POST">
+                      @csrf
+                      @method('DELETE')
+                      <button class="pc__btn-wl position-absolute top-0 end-0 bg-transparent border-0 js-add-wishlist filled-heart" title="Remove From Wishlist" type="submit">
+                        <svg width="16" height="16" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <use href="#icon_heart" />
+                        </svg>
+                      </button>
+                    </form>
 
                   @else
-                  <form action="{{ route('wishlist.add') }}" method="POST">
-                    @csrf
-                    <input type="hidden" name="id" value="{{ $related_product->id }}">
-                    <input type="hidden" name="name" value="{{ $related_product->name }}">
-                    <input type="hidden" name="price" value="{{ $related_product->sale_price == '' ? $related_product->regular_price : $related_product->sale_price }}">
-                    <input type="hidden" name="quantity" value="1">
-                    <button type="submit" class="pc__btn-wl position-absolute top-0 end-0 bg-transparent border-0 js-add-wishlist" title="Add To Wishlist">
-                      <svg width="16" height="16" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <use href="#icon_heart" />
-                      </svg>
-                    </button>
-                  </form>
+                    {{-- ADD TO WISHLIST FORM (Item is NOT in wishlist) --}}
+                    <form action="{{ route('wishlist.add') }}" method="POST">
+                      @csrf
+                      <input type="hidden" name="id" value="{{ $related_product->id }}">
+                      <input type="hidden" name="name" value="{{ $related_product->name }}">
+                      <input type="hidden" name="price" value="{{ $related_product->sale_price == '' ? $related_product->regular_price : $related_product->sale_price }}">
+                      <input type="hidden" name="quantity" value="1">
+                      <button type="submit" class="pc__btn-wl position-absolute top-0 end-0 bg-transparent border-0" title="Add To Wishlist">
+                        <svg width="16" height="16" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <use href="#icon_heart" />
+                        </svg>
+                      </button>
+                    </form>
                   @endif
+                  {{-- DEFENSIVE WISHLIST LOGIC END --}}
+
                 </div>
               </div>
             @endforeach
