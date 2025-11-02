@@ -54,6 +54,10 @@ class LoginController extends Controller
      */
     protected function authenticated(Request $request, $user)
     {
+        // =========================================================
+        // 1. CART PERSISTENCE
+        // =========================================================
+
         // Get the current cart instance
         $guestCart = Cart::instance('cart')->content();
 
@@ -85,11 +89,37 @@ class LoginController extends Controller
         
         // Save the updated cart to the database
         Cart::instance('cart')->store($user->id);
+
+        // =========================================================
+        // 2. WISHLIST PERSISTENCE
+        // =========================================================
+
+        // Get the current guest wishlist content
+        $guestWishlist = Cart::instance('wishlist')->content();
+
+        // Restore the user's saved wishlist from the DB
+        // This loads the DB wishlist into the session for merging
+        $userWishlist = Cart::instance('wishlist')->restore($user->id);
+
+        // If a saved wishlist was restored, merge the guest wishlist items into it.
+        if ($userWishlist) {
+            $userWishlist->merge($guestWishlist);
+        }
+
+        // Save the final, merged wishlist back to the database
+        Cart::instance('wishlist')->store($user->id);
     }
     
     public function logout(Request $request)
-    {
-        Cart::instance('cart')->store(Auth::id());
+    {   
+        // Save both cart and wishlist before logging out
+        if($userId = Auth::id()) {
+            // Save the cart to the database before logging out
+            Cart::instance('cart')->store($userId);
+
+            // Save the wishlist to the database before logging out
+            Cart::instance('wishlist')->store($userId);
+        }
         $this->guard()->logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
