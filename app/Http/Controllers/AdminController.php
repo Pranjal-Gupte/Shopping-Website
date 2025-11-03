@@ -5,11 +5,12 @@ namespace App\Http\Controllers;
 use App\Models\Brand;
 use App\Models\Category;
 use App\Models\Product;
-use Illuminate\Http\Request;
+use App\Models\Coupon;
 use Illuminate\Support\Str;
 use Illuminate\Support\Carbon;
-use Intervention\Image\Laravel\Facades\Image;
 use Illuminate\Support\Facades\File;
+use Illuminate\Http\Request;
+use Intervention\Image\Laravel\Facades\Image;
 
 class AdminController extends Controller
 {
@@ -519,5 +520,11 @@ class AdminController extends Controller
             return redirect()->route('admin.products')->with('status', 'Product deleted successfully!');
         }
         return redirect()->route('admin.products')->with('error', 'Product not found!');
+    }
+
+    public function coupons()
+    {   
+        $coupons = Coupon::orderBy('expiry_date', 'desc')->paginate(12);
+        return view('admin.coupons', compact('coupons'));
     }
 }
