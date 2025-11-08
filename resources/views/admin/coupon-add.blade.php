@@ -49,8 +49,9 @@
 
                 <fieldset class="name">
                     <div class="body-title">Value <span class="tf-color-1">*</span></div>
-                    <input class="flex-grow" type="text" placeholder="Coupon Value" name="value" tabindex="0" value="{{ old('value') }}" aria-required="true" required="">
+                    <input class="flex-grow" type="number" step="0.01" min="0.01" placeholder="Coupon Value" name="value" tabindex="0" value="{{ old('value') }}" aria-required="true" required="">
                 </fieldset>
+                <span class="alert alert-info text-center">**IMPORTANT:** If the Coupon Type is **Percent**, the Value MUST be between 1 and 100 (e.g., enter **20** for 20% off).</span>
                 @error('value') <span class="alert alert-danger text-center">{{ $message }}</span> @enderror
 
                 <fieldset class="name">
