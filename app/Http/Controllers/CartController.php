@@ -10,6 +10,7 @@ use Illuminate\Support\Collection;
 use App\Models\Coupon;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Carbon;
+use App\Models\Address;
 
 class CartController extends Controller
 {
@@ -228,5 +229,57 @@ class CartController extends Controller
         Session::forget('coupon');
         Session::forget('discounts');
         return redirect()->back()->with('success', 'Coupon removed successfully!');
+    }
+
+    public function checkout()
+    {
+        if (!Auth::check()) {
+            return redirect()->route('login')->with('error', 'Please log in to proceed to checkout.');
+        }
+
+        // We'll get the items to display from the cart instance
+        $items = Cart::instance('cart')->content();
+        
+        $cartItemsWithProducts = new Collection();
+        $subtotal = 0;
+        $tax = 0;
+        $total = 0;
+        
+        // Retrieve the tax rate from the configuration file
+        // and convert to a decimal for calculation
+        $taxRate = config('cart.tax', 21) / 100; // If config\cart.php fails to retrieve the tax rate, then 21 will set as default
+
+        foreach ($items as $item) {
+            $product = Product::find($item->id);
+            if ($product) {
+                // Clean the price string before casting to a float
+                $priceString = preg_replace('/[^0-9.]/', '', $product->regular_price);
+                $itemPrice = (float) $priceString;
+                $itemSubtotal = $itemPrice * $item->qty;
+                $itemTax = ($itemSubtotal * $taxRate); 
+
+                $subtotal += $itemSubtotal;
+                $tax += $itemTax;
+                $total += $itemSubtotal + $itemTax;
+
+                $cartItemsWithProducts->push((object) [
+                    'rowId' => $item->rowId,
+                    'id' => $item->id,
+                    'name' => $item->name,
+                    'image' => $product->image,
+                    'qty' => $item->qty,
+                    'price' => $itemPrice,
+                    'subtotal' => $itemSubtotal,
+                ]);
+            }
+        }
+        // Round the final tax amount
+        $tax = round($tax);
+
+        // Round the final total to a whole number for easier cash payments
+        $total = round($total);
+
+        $address = Address::where('user_id', Auth::user()->id)->where('is_default', 1)->first();
+        return view('checkout', compact('address', 'cartItemsWithProducts', 'subtotal', 'tax', 'total'));
     }
 }

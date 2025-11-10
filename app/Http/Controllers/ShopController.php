@@ -56,10 +56,33 @@ class ShopController extends Controller
         return view('shop', compact('products', 'size', 'order', 'brands', 'filterBrands', 'categories', 'filterCategories', 'minPrice', 'maxPrice'));
     }
 
+    /**
+     * Display the specified product details and fetch next/previous products.
+     *
+     * @param string $productSlug
+     * @return \Illuminate\View\View
+     */
     public function productDetails($productSlug)
     {
-        $product = Product::where('slug', $productSlug)->first();
+        // Finding the current product (use firstOrFail for robust error handling)
+        $product = Product::where('slug', $productSlug)->firstOrFail();
+
+        // Finding the previous product (closest ID that is lower than current)
+        // This query fixes the 'Undefined variable' error by creating $prevProduct.
+        $prevProduct = Product::where('id', '<', $product->id)->orderBy('id', 'desc')->first();
+
+        // Finding the next product (closest ID that is higher than current)
+        // This query creates $nextProduct.
+        $nextProduct = Product::where('id', '>', $product->id)->orderBy('id', 'asc')->first();
+        
+        // Fetching related products using original/previous logic
         $related_products = Product::where('slug', '<>', $productSlug)->get()->take(8);
-        return view('details', compact('product', 'related_products'));
+
+        return view('details', [
+            'product' => $product,
+            'related_products' => $related_products,
+            'prevProduct' => $prevProduct,  
+            'nextProduct' => $nextProduct,  
+        ]);
     }
 }

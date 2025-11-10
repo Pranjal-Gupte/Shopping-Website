@@ -438,12 +438,15 @@
                                                 </a>
                                             </li>
                                             <li>
-                                                <a href="login.html" class="user-item">
+                                                <form action="{{ route('logout') }}" method="POST" id="logout-form">
+                                                @csrf
+                                                <a href="#" class="user-item" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
                                                     <div class="icon">
                                                         <i class="icon-log-out"></i>
                                                     </div>
                                                     <div class="body-title-2">Log out</div>
                                                 </a>
+                                                </form>
                                             </li>
                                         </ul>
                                     </div>

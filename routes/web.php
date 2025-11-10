@@ -32,6 +32,8 @@ Route::delete('wishlist/clear', [WishlistController::class, 'clearWishlist'])->n
 Route::post('/coupon/apply-coupon', [CartController::class, 'applyCoupon'])->name('cart.coupon.apply');
 Route::delete('/coupon/remove-coupon', [CartController::class, 'removeCoupon'])->name('cart.coupon.remove');
 
+Route::get('/checkout', [CartController::class, 'checkout'])->name('cart.checkout');
+
 Route::middleware(['auth'])->group(function () {
     Route::get('/account-dashboard', [UserController::class, 'index'])->name('user.index');
 });

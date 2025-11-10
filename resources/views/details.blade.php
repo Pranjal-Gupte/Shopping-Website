@@ -77,17 +77,41 @@
               <a href="#" class="menu-link menu-link_us-s text-uppercase fw-medium">The Shop</a>
             </div><!-- /.breadcrumb -->
 
-            <div
-              class="product-single__prev-next d-flex align-items-center justify-content-between justify-content-md-end flex-grow-1">
-              <a href="#" class="text-uppercase fw-medium"><svg width="10" height="10" viewBox="0 0 25 25"
-                  xmlns="http://www.w3.org/2000/svg">
-                  <use href="#icon_prev_md" />
-                </svg><span class="menu-link menu-link_us-s">Prev</span></a>
-              <a href="#" class="text-uppercase fw-medium"><span class="menu-link menu-link_us-s">Next</span><svg
-                  width="10" height="10" viewBox="0 0 25 25" xmlns="http://www.w3.org/2000/svg">
-                  <use href="#icon_next_md" />
-                </svg></a>
-            </div><!-- /.shop-acs -->
+            <div class="product-single__prev-next d-flex align-items-center justify-content-between justify-content-md-end flex-grow-1">
+            @if ($prevProduct)
+              <a href="{{ route('shop.product.details', ['productSlug' => $prevProduct->slug]) }}" class="text-uppercase fw-medium">
+                  <svg width="10" height="10" viewBox="0 0 25 25" xmlns="http://www.w3.org/2000/svg">
+                      <use href="#icon_prev_md" />
+                  </svg>
+                  <span class="menu-link menu-link_us-s">Prev</span>
+              </a>
+            @else
+                {{-- Disabled state when at the first product --}}
+                <span class="text-uppercase fw-medium text-muted mr-4" style="opacity: 0.5;">
+                    <svg width="10" height="10" viewBox="0 0 25 25" xmlns="http://www.w3.org/2000/svg">
+                        <use href="#icon_prev_md" />
+                    </svg>
+                    <span class="menu-link menu-link_us-s">Prev</span>
+                </span>
+            @endif
+
+            @if ($nextProduct)
+                <a href="{{ route('shop.product.details', ['productSlug' => $nextProduct->slug]) }}" class="text-uppercase fw-medium">
+                    <span class="menu-link menu-link_us-s">Next</span>
+                    <svg width="10" height="10" viewBox="0 0 25 25" xmlns="http://www.w3.org/2000/svg">
+                        <use href="#icon_next_md" />
+                    </svg>
+                </a>
+            @else
+                {{-- Disabled state when at the last product --}}
+                <span class="text-uppercase fw-medium text-muted" style="opacity: 0.5;">
+                    <span class="menu-link menu-link_us-s">Next</span>
+                    <svg width="10" height="10" viewBox="0 0 25 25" xmlns="http://www.w3.org/2000/svg">
+                        <use href="#icon_next_md" />
+                    </svg>
+                </span>
+            @endif<!-- /.shop-acs -->
+            </div>
           </div>
           <h1 class="product-single__name">{{ $product->name }}</h1>
           <div class="product-single__rating">
